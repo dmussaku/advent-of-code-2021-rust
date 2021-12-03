@@ -12,14 +12,14 @@ pub fn read_numbers_from_file(path: &str) -> Vec<i32>{
 pub fn run_part_1(input_numbers: Vec<i32>) -> i32 {
     let mut count = 0;
 
-    println!("{} (N/A - no previous measurement)", input_numbers[0]);
+    // println!("{} (N/A - no previous measurement)", input_numbers[0]);
     for i in 1..input_numbers.len(){
         if input_numbers[i] > input_numbers[i-1]{
             count += 1;
-            println!("{} (increased)", input_numbers[i]);
+            // println!("{} (increased)", input_numbers[i]);
         }
         else{
-            println!("{} (decreased)", input_numbers[i]);
+            // println!("{} (decreased)", input_numbers[i]);
         }
     }
     count
