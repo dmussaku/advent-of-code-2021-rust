@@ -1,5 +1,5 @@
 use std::fs;
-use itertools::{all, Itertools};
+use itertools::{Itertools};
 
 pub struct BingoCard{
     card: [[(u8, bool); 5]; 5]
@@ -7,7 +7,7 @@ pub struct BingoCard{
 
 impl BingoCard{
     pub fn new() -> BingoCard{
-        let mut card: [[(u8, bool); 5]; 5] = [[(0, false); 5];5];
+        let card: [[(u8, bool); 5]; 5] = [[(0, false); 5];5];
         BingoCard{card}
     }
 
@@ -32,6 +32,14 @@ impl BingoCard{
                 .map(|row| row[idx]).
                 all(|cell| cell.1 == true));
         any_row || any_col
+    }
+
+    pub fn sum_unmarked_numbers(&self) -> usize{
+        self.card.iter()
+            .flatten()
+            .filter(|cell| !cell.1)
+            .map(|cell | cell.0 as usize)
+            .sum()
     }
 }
 
@@ -60,22 +68,25 @@ pub fn load_contents(path: &str) -> (Vec<u8>, Vec<BingoCard>) {
     (numbers, bingo_cards)
 }
 
-pub fn play_game(numbers:Vec<u8>, mut bingo_cards: Vec<BingoCard>){
-    for number in numbers{
-        println!("Playing number {}", number);
-        for mut bingo_card in &bingo_cards{
+pub fn play_game(numbers:Vec<u8>, mut bingo_cards: Vec<BingoCard>) -> Option<usize>{
+    for number in numbers {
+        // println!("Playing number {}", number);
+        for bingo_card in bingo_cards.iter_mut() {
             bingo_card.mark_number(number);
-            if bingo_card.is_bingo() == true{
-                println!("{:?}", bingo_card.card);
+            if bingo_card.is_bingo() == true {
+                // println!("{:?}", bingo_card.card);
+                let result = bingo_card.sum_unmarked_numbers() * number as usize;
+                return Some(result);
             }
         }
     }
+    None
 }
 
-pub fn run_part_1(path: &str) -> i32{
-    let (numbers, mut bingo_cards) = load_contents(path);
-    play_game(numbers, bingo_cards);
-    1
+pub fn run_part_1(path: &str) -> usize{
+    let (numbers, bingo_cards) = load_contents(path);
+    let result = play_game(numbers, bingo_cards);
+    result.unwrap()
 }
 
 #[cfg(test)]
@@ -85,6 +96,6 @@ mod tests {
     #[test]
     fn test_run_part_1(){
 
-        assert_eq!(1, run_part_1("src/days/day4/input_files/test_file.txt"))
+        assert_eq!(4512, run_part_1("src/days/day4/input_files/test_file.txt"))
     }
 }
