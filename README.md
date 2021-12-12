@@ -3,7 +3,7 @@ https://adventofcode.com/2021
 
 ```
 cd advent
-cargo install
+cargo build
 cargo test
 cargo run
 ```
